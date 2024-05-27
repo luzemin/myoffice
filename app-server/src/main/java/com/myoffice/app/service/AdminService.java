@@ -5,9 +5,7 @@ import com.myoffice.app.common.R;
 import com.myoffice.app.model.domain.Admin;
 import com.myoffice.app.model.request.AdminRequest;
 
-import javax.servlet.http.HttpSession;
-
 public interface AdminService extends IService<Admin> {
 
-    R verityPasswd(AdminRequest adminRequest, HttpSession session);
+    R verityPasswd(AdminRequest adminRequest);
 }
