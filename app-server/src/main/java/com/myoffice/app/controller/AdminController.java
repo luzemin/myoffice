@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpSession;
-
 
 @RestController
 public class AdminController {
@@ -17,7 +15,7 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/admin/login/status")
-    public R loginStatus(@RequestBody AdminRequest adminRequest, HttpSession session) {
-        return adminService.verityPasswd(adminRequest, session);
+    public R loginStatus(@RequestBody AdminRequest adminRequest) {
+        return adminService.verityPasswd(adminRequest);
     }
 }
