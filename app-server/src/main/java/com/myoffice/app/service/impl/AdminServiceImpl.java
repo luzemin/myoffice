@@ -19,12 +19,13 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Override
     public R verityPasswd(AdminRequest adminRequest) {
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("name",adminRequest.getUsername());
-        queryWrapper.eq("password",adminRequest.getPassword());
+        queryWrapper.eq("name", adminRequest.getUsername());
+        queryWrapper.eq("password", adminRequest.getPassword());
+
         if (adminMapper.selectCount(queryWrapper) > 0) {
-            return R.success("登录成功");
-        } else {
-            return R.error("用户名或密码错误");
+            return R.success("success");
         }
+
+        return R.error("failed to login");
     }
 }
