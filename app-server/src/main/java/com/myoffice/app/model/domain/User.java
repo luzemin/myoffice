@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@TableName(value = "admin")
+@TableName(value = "user")
 @Data
-public class Admin implements UserDetails {
+public class User implements UserDetails {
     @TableId(type = IdType.AUTO)
     private Integer id;
 

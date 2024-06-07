@@ -11,10 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.net.URLEncoder;
 
 @RestController
 @RequestMapping("file")
@@ -41,10 +39,10 @@ public class FileController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(String fileId) throws FileNotFoundException {
+    public ResponseEntity<Resource> download(String fileId) throws FileNotFoundException, UnsupportedEncodingException {
         File dir = new File(Constants.FILE_DIR + fileId);
         File file = dir.listFiles()[0];
-        String fileName = file.getName();
+        String fileName = URLEncoder.encode( file.getName(), "UTF-8");
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
