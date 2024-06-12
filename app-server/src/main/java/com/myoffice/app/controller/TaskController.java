@@ -20,4 +20,9 @@ public class TaskController {
     public R query(@RequestParam int userId) {
         return taskService.queryTask(userId);
     }
+
+    @PostMapping("/api/task/edit")
+    public R edit(@RequestBody TaskRequest request) {
+        return taskService.editTask(request);
+    }
 }

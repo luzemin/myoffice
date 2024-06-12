@@ -32,6 +32,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
     @Override
+    public R editTask(TaskRequest request) {
+        Task entity = new Task();
+        BeanUtils.copyProperties(request, entity);
+        int result = taskMapper.updateById(entity);
+        if (result > 0) {
+            return R.success("success");
+        }
+
+        return R.error("failed to edit task");
+    }
+
+    @Override
     public R queryTask(int userId) {
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("assignee", userId)

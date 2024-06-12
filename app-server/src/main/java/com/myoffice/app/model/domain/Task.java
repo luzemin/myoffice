@@ -19,6 +19,8 @@ public class Task {
     private Date endDate;
     private Integer owner;
     private Integer assignee;
+
+    //0.未开始 1.进行中 2.已完成 3.关闭
     private Integer status;
 
     @Override
