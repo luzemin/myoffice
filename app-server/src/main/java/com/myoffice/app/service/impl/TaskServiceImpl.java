@@ -32,9 +32,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
     @Override
-    public R getTask(int userId) {
+    public R queryTask(int userId) {
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("owner", userId);
+        queryWrapper.eq("assignee", userId)
+                .or()
+                .eq("owner", userId);
         List<Task> result = taskMapper.selectList(queryWrapper);
 
         return R.success("success", result);

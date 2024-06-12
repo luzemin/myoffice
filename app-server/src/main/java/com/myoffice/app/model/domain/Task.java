@@ -6,15 +6,20 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Date;
+
 @TableName(value = "task")
 @Data
 public class Task {
     @TableId(type = IdType.AUTO)
     private Integer id;
-
     private String name;
-
     private String template;
+    private Date startDate;
+    private Date endDate;
+    private Integer owner;
+    private Integer assignee;
+    private Integer status;
 
     @Override
     public String toString() {

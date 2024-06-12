@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myoffice.app.mapper.TaskMapper">
+
+  <resultMap id="BaseResultMap" type="com.myoffice.app.model.domain.Task">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="template" jdbcType="VARCHAR" property="template" />
+    <result column="start_date" jdbcType="DATE" property="startDate" />
+    <result column="end_date" jdbcType="DATE" property="endDate" />
+    <result column="owner" jdbcType="INTEGER" property="owner" />
+    <result column="assignee" jdbcType="INTEGER" property="assignee" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id
+  </sql>
+
+</mapper>

@@ -11,14 +11,13 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @PostMapping("/task/creation")
-    public R creation(@RequestBody TaskRequest request) {
+    @PostMapping("/api/task/create")
+    public R create(@RequestBody TaskRequest request) {
         return taskService.createTask(request);
     }
 
-    @GetMapping("/task/retrieval")
-    public R retrieval(@RequestBody int userId) {
-
-        return taskService.getTask(userId);
+    @GetMapping("/api/task/query")
+    public R query(@RequestParam int userId) {
+        return taskService.queryTask(userId);
     }
 }

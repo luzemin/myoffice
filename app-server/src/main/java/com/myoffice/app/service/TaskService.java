@@ -9,5 +9,5 @@ public interface TaskService extends IService<Task> {
 
     R createTask(TaskRequest request);
 
-    R getTask(int userId);
+    R queryTask(int userId);
 }
