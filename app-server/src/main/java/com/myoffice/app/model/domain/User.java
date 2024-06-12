@@ -17,7 +17,7 @@ public class User implements UserDetails {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private String name;
+    private String username;
 
     private String password;
 
@@ -33,7 +33,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override

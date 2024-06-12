@@ -1,15 +1,13 @@
 package com.myoffice.app.config;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.myoffice.app.mapper.AdminMapper;
-import com.myoffice.app.model.domain.Admin;
+import com.myoffice.app.mapper.UserMapper;
+import com.myoffice.app.model.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,11 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final AdminMapper userMapper;
+    private final UserMapper userMapper;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userMapper.selectOne(new QueryWrapper<Admin>().eq("name", username));
+        return username -> userMapper.selectOne(new QueryWrapper<User>().eq("username", username));
     }
 
     @Bean
@@ -31,11 +29,6 @@ public class ApplicationConfig {
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
     }
 
     @Bean
