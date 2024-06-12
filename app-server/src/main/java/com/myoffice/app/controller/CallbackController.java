@@ -15,7 +15,7 @@ public class CallbackController {
     @Autowired
     private CallbackService callbackService;
 
-    @PostMapping("/callback")
+    @PostMapping("/api/onlyoffice/callback")
     public String callback(@RequestBody final Callback callback,String fileId) {
         try {
             Callback verifiedCallback =  callbackService.verifyCallback(callback, null);

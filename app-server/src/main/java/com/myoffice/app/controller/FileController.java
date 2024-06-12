@@ -15,34 +15,34 @@ import java.io.*;
 import java.net.URLEncoder;
 
 @RestController
-@RequestMapping("file")
 public class FileController {
 
-    @PostMapping("/upload")
+    @PostMapping("/api/file/upload")
     public R upload(@RequestParam("file") MultipartFile file) {
-        String fileName = file.getOriginalFilename();
         try {
-            String filesDir = Constants.FILE_DIR  + RandomUtils.code();
-            File filesDirectory = new File(filesDir);
+            String fileName = file.getOriginalFilename();
+            String fileId = RandomUtils.code();
+
+            File filesDirectory = new File(Constants.FILE_DIR + fileId);
             if (!filesDirectory.exists()) {
                 filesDirectory.mkdir();
             }
 
             File savedFile = new File(filesDirectory + "/" + fileName);
             file.transferTo(savedFile);
+            return R.success("success", fileId);
+
         } catch (IOException e) {
 
             return R.error("failed to upload file");
         }
-
-        return R.success("success", fileName);
     }
 
-    @GetMapping("/download")
+    @GetMapping("/api/file/download")
     public ResponseEntity<Resource> download(String fileId) throws FileNotFoundException, UnsupportedEncodingException {
         File dir = new File(Constants.FILE_DIR + fileId);
         File file = dir.listFiles()[0];
-        String fileName = URLEncoder.encode( file.getName(), "UTF-8");
+        String fileName = URLEncoder.encode(file.getName(), "UTF-8");
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))

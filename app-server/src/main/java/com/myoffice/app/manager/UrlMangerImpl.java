@@ -17,12 +17,12 @@ public class UrlMangerImpl extends DefaultUrlManager {
 
     @Override
     public String getFileUrl(final String fileId) {
-        return getServerUrl() + "/file/download?fileId=" + fileId;
+        return getServerUrl() + "/api/file/download?fileId=" + fileId;
     }
 
     @Override
     public String getCallbackUrl(final String fileId) {
-        return getServerUrl() + "/callback?fileId=" + fileId;
+        return getServerUrl() + "/api/onlyoffice/callback?fileId=" + fileId;
     }
 
     private String getServerUrl() {
