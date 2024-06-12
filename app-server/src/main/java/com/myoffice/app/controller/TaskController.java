@@ -1,9 +1,11 @@
 package com.myoffice.app.controller;
 
 import com.myoffice.app.common.R;
+import com.myoffice.app.model.domain.User;
 import com.myoffice.app.model.request.TaskRequest;
 import com.myoffice.app.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +19,9 @@ public class TaskController {
     }
 
     @GetMapping("/api/task/query")
-    public R query(@RequestParam int userId) {
-        return taskService.queryTask(userId);
+    public R query(Authentication auth) {
+        User currentUser = (User) auth.getPrincipal();
+        return taskService.queryTask(currentUser.getId());
     }
 
     @PostMapping("/api/task/edit")
