@@ -16,6 +16,7 @@ CREATE TABLE `admin` (
 CREATE TABLE `task` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
+  `description` varchar(1000) NOT NULL,
   `template` varchar(100) DEFAULT NULL,
   `start_date` datetime NOT NULL,
   `end_date` datetime DEFAULT NULL,

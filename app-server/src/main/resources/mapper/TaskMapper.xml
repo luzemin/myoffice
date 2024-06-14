@@ -6,6 +6,7 @@
   <resultMap id="BaseResultMap" type="com.myoffice.app.model.domain.Task">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="template" jdbcType="VARCHAR" property="template" />
     <result column="start_date" jdbcType="DATE" property="startDate" />
     <result column="end_date" jdbcType="DATE" property="endDate" />
