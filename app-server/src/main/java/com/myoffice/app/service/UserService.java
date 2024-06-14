@@ -8,4 +8,6 @@ import com.myoffice.app.model.request.UserRequest;
 public interface UserService extends IService<User> {
 
     R login(UserRequest userRequest);
+
+    R getAllUsers();
 }

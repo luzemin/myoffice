@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.List;
 
+import static com.myoffice.app.constant.Constants.*;
+
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements TaskService {
 
@@ -50,10 +52,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         if (!filesDirectory.exists()) {
             filesDirectory.mkdir();
         }
-        File savedFile = new File(filesDirectory + "/" + taskName + "." + fileFormat);
-        OutputStream outStream = new FileOutputStream(savedFile);
-        InputStream is = new ClassPathResource("/assets/document-templates/template." + fileFormat).getInputStream();
-        outStream.write(is.readAllBytes());
+
+        String fileFullPath = filesDirectory + "/" + taskName + "." + fileFormat;
+        try (OutputStream outStream = new FileOutputStream(fileFullPath)) {
+            InputStream is = new ClassPathResource(FILE_TEMPLATE_PATH + FILE_TEMPLATE_NAME + DOT + fileFormat).getInputStream();
+            outStream.write(is.readAllBytes());
+        }
 
         return fileId;
     }

@@ -13,6 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
@@ -49,5 +52,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         return R.error("user name or password is incorrect");
+    }
+
+    @Override
+    public R getAllUsers() {
+        List<User> allUsers = userMapper.selectList(new QueryWrapper<>());
+        List<UserResponse> users = allUsers
+                .stream()
+                .map(user -> new UserResponse(user.getId(), user.getUsername(), null))
+                .collect(Collectors.toList());
+        return R.success("success", users);
     }
 }
