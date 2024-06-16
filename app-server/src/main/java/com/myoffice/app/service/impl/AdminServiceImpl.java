@@ -6,6 +6,7 @@ import com.myoffice.app.common.R;
 import com.myoffice.app.mapper.AdminMapper;
 import com.myoffice.app.model.domain.Admin;
 import com.myoffice.app.model.request.AdminRequest;
+import com.myoffice.app.model.response.AdminResponse;
 import com.myoffice.app.service.AdminService;
 import com.myoffice.app.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +22,18 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     private JwtUtil jwtUtil;
 
     @Override
-    public R verityPasswd(AdminRequest adminRequest) {
+    public R adminLogin(AdminRequest adminRequest) {
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", adminRequest.getUsername());
         queryWrapper.eq("password", adminRequest.getPassword());
 
         Admin admin = adminMapper.selectOne(queryWrapper);
         if (null != admin) {
-            var jwtToken = jwtUtil.generateToken(adminRequest.getUsername());
-            return R.success("success", jwtToken);
+            AdminResponse responseData = AdminResponse.builder()
+                    .username(adminRequest.getUsername())
+                    .token(jwtUtil.generateToken(adminRequest.getUsername()))
+                    .build();
+            return R.success("success", responseData);
         }
 
         return R.error("failed to login");

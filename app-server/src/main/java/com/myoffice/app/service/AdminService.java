@@ -7,5 +7,5 @@ import com.myoffice.app.model.request.AdminRequest;
 
 public interface AdminService extends IService<Admin> {
 
-    R verityPasswd(AdminRequest adminRequest);
+    R adminLogin(AdminRequest adminRequest);
 }
