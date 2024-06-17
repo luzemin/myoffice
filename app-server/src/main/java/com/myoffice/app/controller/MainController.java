@@ -1,6 +1,5 @@
 package com.myoffice.app.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.onlyoffice.manager.url.UrlManager;
 import com.onlyoffice.model.documenteditor.Config;
 import com.onlyoffice.model.documenteditor.config.document.Type;
@@ -20,7 +19,7 @@ public class MainController {
     private UrlManager urlManager;
 
     @GetMapping("/editor")
-    public String main(final Model model, String fileId) throws JsonProcessingException {
+    public String main(final Model model, String fileId) {
         Config config = configService.createConfig(fileId, Mode.EDIT, Type.DESKTOP);
 
         model.addAttribute("config", config);
