@@ -19,6 +19,11 @@ public class UserController {
         return userService.login(userRequest);
     }
 
+    @PostMapping("/api/admin/user/create")
+    public R createUser(@RequestBody UserRequest userRequest) {
+        return userService.create(userRequest);
+    }
+
     @GetMapping("/api/user/all")
     public R getAllUsers() {
         return userService.getAllUsers();

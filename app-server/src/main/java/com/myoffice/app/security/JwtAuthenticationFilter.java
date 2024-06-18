@@ -1,4 +1,4 @@
-package com.myoffice.app.config;
+package com.myoffice.app.security;
 
 import com.myoffice.app.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -6,11 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,7 +20,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtTokenUtil;
-    private final ApplicationContext applicationContext;
+    private final SystemUserDetailService systemUserDetailService;
+    private final AdminDetailService adminDetailService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -45,16 +44,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             boolean adminRequest = request.getRequestURI().contains("/api/admin");
-            UserDetailsService userDetailsService = (UserDetailsService) applicationContext
-                    .getBean(adminRequest ? "adminDetailsService" : "userDetailsService");
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails;
+            if (adminRequest) {
+                userDetails = adminDetailService.loadUserByUsername(username);
+            } else {
+                userDetails = systemUserDetailService.loadUserByUsername(username);
+            }
 
             if (userDetails != null && jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
-
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }

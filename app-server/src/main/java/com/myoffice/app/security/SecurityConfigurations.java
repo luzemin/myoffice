@@ -1,17 +1,13 @@
-package com.myoffice.app.config;
+package com.myoffice.app.security;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.myoffice.app.mapper.AdminMapper;
-import com.myoffice.app.mapper.UserMapper;
-import com.myoffice.app.model.domain.Admin;
-import com.myoffice.app.model.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,19 +20,22 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfigurations {
 
-    private final UserMapper userMapper;
-    private final AdminMapper adminMapper;
+    private final SystemUserDetailService systemUserDetailService;
+    private final AdminDetailService adminDetailService;
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private static final String[] WHITE_LIST_URL = {};
 
-    @Bean(name = "userDetailsService")
-    public UserDetailsService userDetailsService() {
-        return username -> userMapper.selectOne(new QueryWrapper<User>().eq("username", username));
-    }
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        SystemUserAuthenticationProvider userAuthProvider = new SystemUserAuthenticationProvider();
+        userAuthProvider.setUserDetailsService(systemUserDetailService);
+        userAuthProvider.setPasswordEncoder(passwordEncoder());
 
-    @Bean(name = "adminDetailsService")
-    public UserDetailsService adminDetailsService() {
-        return username -> adminMapper.selectOne(new QueryWrapper<Admin>().eq("name", username));
+        AdminAuthenticationProvider adminAuthProvider = new AdminAuthenticationProvider();
+        adminAuthProvider.setUserDetailsService(adminDetailService);
+        adminAuthProvider.setPasswordEncoder(passwordEncoder());
+
+        ProviderManager manager = new ProviderManager(userAuthProvider, adminAuthProvider);
+        return manager;
     }
 
     @Bean
@@ -46,11 +45,12 @@ public class SecurityConfigurations {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-       return http
+        return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated())
+                .authenticationManager(authenticationManager())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

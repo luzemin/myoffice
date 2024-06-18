@@ -1,15 +1,17 @@
 package com.myoffice.app.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.myoffice.app.common.R;
 import com.myoffice.app.mapper.AdminMapper;
 import com.myoffice.app.model.domain.Admin;
 import com.myoffice.app.model.request.AdminRequest;
 import com.myoffice.app.model.response.AdminResponse;
+import com.myoffice.app.security.AdminAuthenticationToken;
 import com.myoffice.app.service.AdminService;
 import com.myoffice.app.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,23 +21,27 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     private AdminMapper adminMapper;
 
     @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Override
     public R adminLogin(AdminRequest adminRequest) {
-        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("name", adminRequest.getUsername());
-        queryWrapper.eq("password", adminRequest.getPassword());
-
-        Admin admin = adminMapper.selectOne(queryWrapper);
-        if (null != admin) {
+        try {
+            authenticationManager.authenticate(
+                    new AdminAuthenticationToken(adminRequest.getUsername(), adminRequest.getPassword())
+            );
             AdminResponse responseData = AdminResponse.builder()
                     .username(adminRequest.getUsername())
                     .token(jwtUtil.generateToken(adminRequest.getUsername()))
                     .build();
-            return R.success("success", responseData);
-        }
 
-        return R.error("failed to login");
+            return R.success("success", responseData);
+
+        } catch (AuthenticationException ex) {
+
+            return R.error("failed to login");
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.myoffice.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.myoffice.app.security.SystemUserAuthenticationToken;
 import com.myoffice.app.common.R;
 import com.myoffice.app.mapper.UserMapper;
 import com.myoffice.app.model.domain.User;
@@ -11,6 +12,10 @@ import com.myoffice.app.service.UserService;
 import com.myoffice.app.utils.JwtUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +30,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public R login(UserRequest userRequest) {
         String userName = userRequest.getUsername();
@@ -38,20 +49,41 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return R.error("password is empty");
         }
 
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", userName);
-        queryWrapper.eq("password", password);
-        User user = userMapper.selectOne(queryWrapper);
+//        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("username", userName);
+//        queryWrapper.eq("password", password);
+//        User user = userMapper.selectOne(queryWrapper);
 
-        if (null != user) {
+        try {
+            //利用spring security机制验证用户名密码
+            Authentication authenticate = authenticationManager.authenticate(
+                    new SystemUserAuthenticationToken(userName, password)
+            );
+
+            //User user = (User) authenticate.getPrincipal();
             UserResponse responseData = UserResponse.builder()
                     .username(userName)
                     .token(jwtUtil.generateToken(userName))
                     .build();
-            return R.success("success", responseData);
-        }
 
-        return R.error("user name or password is incorrect");
+            return R.success("success", responseData);
+
+        } catch (AuthenticationException ex) {
+
+            return R.error("user name or password is incorrect");
+        }
+    }
+
+    @Override
+    public R create(UserRequest userRequest) {
+        User user = new User();
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        int rows = userMapper.insert(user);
+        if (rows > 0) {
+            return R.success("success");
+        }
+        return R.error("failed to create user");
     }
 
     @Override
