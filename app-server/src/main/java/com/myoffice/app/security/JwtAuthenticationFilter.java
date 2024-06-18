@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
+    private final Logger logger = Logger.getLogger(getClass());
     private final JwtUtil jwtTokenUtil;
     private final SystemUserDetailService systemUserDetailService;
     private final AdminDetailService adminDetailService;
@@ -38,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenUtil.extractUsername(jwtToken);
             } catch (Exception e) {
-                System.out.println("Error extracting username from token: " + e.getMessage());
+                logger.error("Error extracting username from token: " + e.getMessage());
             }
         }
 
