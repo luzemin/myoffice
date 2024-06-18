@@ -30,10 +30,10 @@ public class TaskRequest {
     //3.空白模板 BLANK
     private String templateSource;
 
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private Date startDate  = Date.from(Instant.now());
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date startDate = Date.from(Instant.now());
 
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
 
     private Integer owner;
@@ -45,4 +45,6 @@ public class TaskRequest {
     //2.已完成
     //3.关闭
     private Integer status = 0;
+
+    private Integer page = 1;
 }

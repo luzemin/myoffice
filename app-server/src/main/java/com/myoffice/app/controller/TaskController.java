@@ -19,9 +19,9 @@ public class TaskController {
     }
 
     @GetMapping("/api/task/query")
-    public R query(Authentication auth) {
+    public R query(Authentication auth, TaskRequest request) {
         User currentUser = (User) auth.getPrincipal();
-        return taskService.queryTask(currentUser.getId());
+        return taskService.queryTask(currentUser.getId(),request);
     }
 
     @PostMapping("/api/task/edit")

@@ -1,21 +1,24 @@
 package com.myoffice.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.myoffice.app.common.R;
 import com.myoffice.app.constant.Constants;
 import com.myoffice.app.mapper.TaskMapper;
 import com.myoffice.app.model.domain.Task;
 import com.myoffice.app.model.request.TaskRequest;
+import com.myoffice.app.model.response.TaskResponse;
 import com.myoffice.app.service.TaskService;
 import com.myoffice.app.utils.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.List;
 
 import static com.myoffice.app.constant.Constants.*;
 
@@ -83,12 +86,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     //分页
     //联查：联查用户表显示创建人和执行人user name
     @Override
-    public R queryTask(int userId) {
+    public R queryTask(int userId, TaskRequest request) {
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("assignee", userId)
-                .or()
-                .eq("owner", userId);
-        List<Task> result = taskMapper.selectList(queryWrapper);
+
+        //模糊查询task name
+        if (StringUtils.isNotBlank(request.getName())) {
+            queryWrapper.like("task.name", request.getName());
+        }
+
+        queryWrapper.and(c -> c.eq("task.assignee", userId).or().eq("task.owner", userId))
+                .orderBy(true, false, "task.id");
+
+        //默认单表分页查询
+        //IPage<Task> result = taskMapper.selectPage(page, queryWrapper);
+
+        //默认单表全部查询
+        //List<Task> result = taskMapper.selectList(queryWrapper);
+
+        //自定义多表联查分页实现
+        IPage<TaskResponse> result = taskMapper.selectTask(new Page<>(request.getPage(), 5), queryWrapper);
 
         return R.success("success", result);
     }

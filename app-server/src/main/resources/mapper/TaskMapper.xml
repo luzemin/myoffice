@@ -18,8 +18,43 @@
     <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
 
+  <resultMap id="taskResponseMap" extends="BaseResultMap" type="com.myoffice.app.model.response.TaskResponse">
+    <result column="owner_name" jdbcType="VARCHAR" property="ownerName" />
+    <result column="assignee_name" jdbcType="VARCHAR" property="assigneeName" />
+  </resultMap>
+
   <sql id="Base_Column_List">
-    id
+    task.id,
+    task.name,
+    task.description,
+    task.template,
+    task.template_name,
+    task.template_source,
+    task.template_format,
+    task.start_date,
+    task.end_date,
+    task.owner,
+    task.assignee,
+    task.status
   </sql>
 
+  <select id="selectTask" resultMap="taskResponseMap">
+    SELECT
+      <include refid="Base_Column_List"></include>
+      ,u1.username as owner_name
+      ,u2.username as assignee_name
+    FROM
+      task
+    JOIN
+      user u1
+    ON
+      task.owner = u1.id
+    JOIN
+      user u2
+    ON
+      task.assignee = u2.id
+    <where>
+      ${ew.sqlSegment}
+    </where>
+  </select>
 </mapper>
