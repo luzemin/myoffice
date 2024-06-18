@@ -16,11 +16,13 @@ public class Task {
     private String name;
     private String description;
     private String template;
+    private String templateName;
+    private String templateSource;
+    private String templateFormat;
     private Date startDate;
     private Date endDate;
     private Integer owner;
     private Integer assignee;
-    //0.未开始 1.进行中 2.已完成 3.关闭
     private Integer status = 0;
 
     @Override

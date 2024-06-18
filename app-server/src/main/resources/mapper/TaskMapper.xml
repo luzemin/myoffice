@@ -8,6 +8,9 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="template" jdbcType="VARCHAR" property="template" />
+    <result column="template_name" jdbcType="VARCHAR" property="templateName" />
+    <result column="template_source" jdbcType="VARCHAR" property="templateSource" />
+    <result column="template_format" jdbcType="VARCHAR" property="templateFormat" />
     <result column="start_date" jdbcType="DATE" property="startDate" />
     <result column="end_date" jdbcType="DATE" property="endDate" />
     <result column="owner" jdbcType="INTEGER" property="owner" />

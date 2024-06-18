@@ -27,9 +27,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     public R createTask(TaskRequest request) {
+        //需要校验当前登录用户是否可以创建
+        //需要校验task的必填项
         try {
             if ("BLANK".equals(request.getTemplateSource())) {
-                String fileId = createBlankTemplate(request.getName(), request.getTemplateFormat());
+                String taskName = request.getName();
+                String fileId = createBlankTemplate(taskName, request.getTemplateFormat());
+                request.setTemplateName(taskName);
                 request.setTemplate(fileId);
             }
         } catch (IOException e) {
@@ -64,6 +68,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     public R editTask(TaskRequest request) {
+        //需要校验当前登录用户是否可以编辑
         Task entity = new Task();
         BeanUtils.copyProperties(request, entity);
         int result = taskMapper.updateById(entity);
@@ -74,6 +79,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         return R.error("failed to edit task");
     }
 
+    //条件检索：taskname enddate status
+    //分页
+    //联查：联查用户表显示创建人和执行人user name
     @Override
     public R queryTask(int userId) {
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
