@@ -12,10 +12,15 @@ import com.onlyoffice.model.documenteditor.config.editorconfig.Customization;
 import com.onlyoffice.model.documenteditor.config.editorconfig.Mode;
 import com.onlyoffice.model.documenteditor.config.editorconfig.customization.Customer;
 import com.onlyoffice.service.documenteditor.config.DefaultConfigService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ConfigServiceImpl extends DefaultConfigService {
+    @Autowired
+    private HttpServletRequest request;
+
     public ConfigServiceImpl(final DocumentManager documentManager, final UrlManager urlManager,
                              final JwtManager jwtManager, final SettingsManager settingsManager) {
         super(documentManager, urlManager, jwtManager, settingsManager);
@@ -31,8 +36,7 @@ public class ConfigServiceImpl extends DefaultConfigService {
 
     @Override
     public User getUser() {
-        //return current login user
-        return User.builder().name("Timothy" + Math.random() * 100).build();
+        return User.builder().name(request.getUserPrincipal().getName()).build();
     }
 
     @Override
