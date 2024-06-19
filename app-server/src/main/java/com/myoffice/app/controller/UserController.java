@@ -1,6 +1,7 @@
 package com.myoffice.app.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.log4j.Logger;
 import com.myoffice.app.common.R;
 import com.myoffice.app.model.request.UserRequest;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "User API", description = "all api about users")
 @RestController
 public class UserController {
     private final Logger logger = Logger.getLogger(getClass());
