@@ -56,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         try {
             //利用spring security机制验证用户名密码
-            Authentication authenticate = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new SystemUserAuthenticationToken(userName, password)
             );
 

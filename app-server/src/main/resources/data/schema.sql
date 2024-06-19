@@ -4,8 +4,8 @@ CREATE DATABASE `myoffice` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb
 
 CREATE TABLE `admin` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `password` varchar(1000) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
@@ -21,8 +21,8 @@ CREATE TABLE `task` (
   `template_name` varchar(100) DEFAULT NULL,
   `template_source` varchar(100) DEFAULT NULL,
   `template_format` varchar(100) DEFAULT NULL,
-  `start_date` datetime NOT NULL,
-  `end_date` datetime DEFAULT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date DEFAULT NULL,
   `owner` int NOT NULL,
   `assignee` varchar(100) NOT NULL,
   `status` int NOT NULL,
@@ -35,6 +35,6 @@ CREATE TABLE `task` (
 CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
-  `password` varchar(100) NOT NULL,
+  `password` varchar(1000) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

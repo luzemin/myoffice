@@ -3,6 +3,7 @@ package com.myoffice.app.controller;
 import com.myoffice.app.common.R;
 import com.myoffice.app.model.domain.User;
 import com.myoffice.app.model.request.TaskRequest;
+import com.myoffice.app.model.request.TaskSearchCriteria;
 import com.myoffice.app.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,9 +20,9 @@ public class TaskController {
     }
 
     @GetMapping("/api/task/query")
-    public R query(Authentication auth, TaskRequest request) {
+    public R query(Authentication auth, TaskSearchCriteria searchCriteria) {
         User currentUser = (User) auth.getPrincipal();
-        return taskService.queryTask(currentUser.getId(),request);
+        return taskService.queryTask(currentUser.getId(), searchCriteria);
     }
 
     @PostMapping("/api/task/edit")

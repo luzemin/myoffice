@@ -9,10 +9,12 @@ import com.myoffice.app.constant.Constants;
 import com.myoffice.app.mapper.TaskMapper;
 import com.myoffice.app.model.domain.Task;
 import com.myoffice.app.model.request.TaskRequest;
+import com.myoffice.app.model.request.TaskSearchCriteria;
 import com.myoffice.app.model.response.TaskResponse;
 import com.myoffice.app.service.TaskService;
 import com.myoffice.app.utils.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -82,20 +84,43 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         return R.error("failed to edit task");
     }
 
-    //条件检索：taskname enddate status
-    //分页
-    //联查：联查用户表显示创建人和执行人user name
     @Override
-    public R queryTask(int userId, TaskRequest request) {
+    public R queryTask(int userId, TaskSearchCriteria searchCriteria) {
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
 
         //模糊查询task name
-        if (StringUtils.isNotBlank(request.getName())) {
-            queryWrapper.like("task.name", request.getName());
+        if (StringUtils.isNotBlank(searchCriteria.getName())) {
+            queryWrapper.like("task.name", searchCriteria.getName());
         }
 
-        queryWrapper.and(c -> c.eq("task.assignee", userId).or().eq("task.owner", userId))
-                .orderBy(true, false, "task.id");
+        //查询状态
+        if (searchCriteria.getStatus() != null && searchCriteria.getStatus() >= 0) {
+            queryWrapper.eq("task.status", searchCriteria.getStatus());
+        }
+
+        //查询结束时间
+        if (searchCriteria.getEndDate() != null) {
+            String endDate = DateFormatUtils.format(searchCriteria.getEndDate(), DATE_FORMAT);
+            String applySql = "task.end_date <= date '" + endDate + "'";
+            queryWrapper.apply(applySql);
+        }
+
+        //创建人
+        if (Boolean.TRUE.equals(searchCriteria.getIsOwner())) {
+            queryWrapper.eq("task.owner", userId);
+        }
+
+        //执行人
+        if (Boolean.TRUE.equals(searchCriteria.getIsAssignee())) {
+            queryWrapper.eq("task.assignee", userId);
+        }
+
+        if (searchCriteria.getIsOwner() == null && searchCriteria.getIsAssignee() == null) {
+            queryWrapper.and(c -> c.eq("task.assignee", userId).or().eq("task.owner", userId));
+        }
+
+        //排序
+        queryWrapper.orderBy(true, false, "task.id");
 
         //默认单表分页查询
         //IPage<Task> result = taskMapper.selectPage(page, queryWrapper);
@@ -104,7 +129,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         //List<Task> result = taskMapper.selectList(queryWrapper);
 
         //自定义多表联查分页实现
-        IPage<TaskResponse> result = taskMapper.selectTask(new Page<>(request.getPage(), 5), queryWrapper);
+        IPage<TaskResponse> result = taskMapper
+                .selectTask(new Page<>(searchCriteria.getPage(), searchCriteria.getPageSize()), queryWrapper);
 
         return R.success("success", result);
     }

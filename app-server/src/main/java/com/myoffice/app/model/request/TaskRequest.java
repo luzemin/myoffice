@@ -45,6 +45,4 @@ public class TaskRequest {
     //2.已完成
     //3.关闭
     private Integer status = 0;
-
-    private Integer page = 1;
 }
