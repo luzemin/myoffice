@@ -47,16 +47,16 @@ public class SwaggerConfigurations {
     @Bean("defaultGroupApi")
     public GroupedOpenApi defaultGroupApi() {
         return GroupedOpenApi.builder()
-                .group("Default Group")
-                .pathsToExclude("/api/admin/**","/api/auth/admin/**")
+                .group("Default")
+                .pathsToExclude("/api/admin/**", "/api/auth/admin/**")
                 .build();
-
     }
+
     @Bean("adminGroupApi")
     public GroupedOpenApi adminGroupApi() {
         return GroupedOpenApi.builder()
-                .group("Admin Group")
-                .pathsToMatch("/api/admin/**")
+                .group("Admin")
+                .pathsToMatch("/api/admin/**", "/api/auth/admin/**")
                 .build();
     }
 }
