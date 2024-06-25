@@ -59,7 +59,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         String fileId = RandomUtils.code();
         File filesDirectory = new File(Constants.FILE_DIR + fileId);
         if (!filesDirectory.exists()) {
-            filesDirectory.mkdir();
+            filesDirectory.mkdirs();
         }
 
         String fileFullPath = filesDirectory + "/" + taskName + "." + fileFormat;

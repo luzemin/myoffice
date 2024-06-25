@@ -25,7 +25,7 @@ public class FileController {
 
             File filesDirectory = new File(Constants.FILE_DIR + fileId);
             if (!filesDirectory.exists()) {
-                filesDirectory.mkdir();
+                filesDirectory.mkdirs();
             }
 
             File savedFile = new File(filesDirectory + "/" + fileName);
