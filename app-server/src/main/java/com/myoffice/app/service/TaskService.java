@@ -12,5 +12,5 @@ public interface TaskService extends IService<Task> {
 
     R editTask(TaskRequest request);
 
-    R queryTask(int userId, TaskSearchCriteria searchCriteria);
+    R queryTask(TaskSearchCriteria searchCriteria);
 }

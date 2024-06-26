@@ -1,7 +1,6 @@
 package com.myoffice.app.controller;
 
 import com.myoffice.app.common.R;
-import com.myoffice.app.model.domain.User;
 import com.myoffice.app.model.request.TaskRequest;
 import com.myoffice.app.model.request.TaskSearchCriteria;
 import com.myoffice.app.service.TaskService;
@@ -21,8 +20,8 @@ public class TaskController {
 
     @GetMapping("/api/task/query")
     public R query(Authentication auth, TaskSearchCriteria searchCriteria) {
-        User currentUser = (User) auth.getPrincipal();
-        return taskService.queryTask(currentUser.getId(), searchCriteria);
+        //User currentUser = (User) auth.getPrincipal();
+        return taskService.queryTask(searchCriteria);
     }
 
     @PostMapping("/api/task/edit")

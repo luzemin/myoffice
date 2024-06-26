@@ -12,6 +12,7 @@ import com.myoffice.app.model.request.TaskRequest;
 import com.myoffice.app.model.request.TaskSearchCriteria;
 import com.myoffice.app.model.response.TaskResponse;
 import com.myoffice.app.service.TaskService;
+import com.myoffice.app.service.UserService;
 import com.myoffice.app.utils.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -30,10 +31,24 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Autowired
     private TaskMapper taskMapper;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public R createTask(TaskRequest request) {
-        //需要校验当前登录用户是否可以创建
-        //需要校验task的必填项
+        if (StringUtils.isBlank(request.getName())) {
+            return R.error("task name is empty");
+        }
+        if (request.getOwner() == null) {
+            return R.error("task owner is empty");
+        }
+        if (request.getAssignee() == null) {
+            return R.error("task assignee is empty");
+        }
+        if (request.getEndDate() == null) {
+            return R.error("task end date is empty");
+        }
+
         try {
             if ("BLANK".equals(request.getTemplateSource())) {
                 String taskName = request.getName();
@@ -55,25 +70,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         return R.error("failed to create new task");
     }
 
-    private String createBlankTemplate(String taskName, String fileFormat) throws IOException {
-        String fileId = RandomUtils.code();
-        File filesDirectory = new File(Constants.FILE_DIR + fileId);
-        if (!filesDirectory.exists()) {
-            filesDirectory.mkdirs();
-        }
-
-        String fileFullPath = filesDirectory + "/" + taskName + "." + fileFormat;
-        try (OutputStream outStream = new FileOutputStream(fileFullPath)) {
-            InputStream is = new ClassPathResource(FILE_TEMPLATE_PATH + FILE_TEMPLATE_NAME + DOT + fileFormat).getInputStream();
-            outStream.write(is.readAllBytes());
-        }
-
-        return fileId;
-    }
-
     @Override
     public R editTask(TaskRequest request) {
-        //需要校验当前登录用户是否可以编辑
+        Task targetTask = taskMapper.selectById(request.getId());
+        if(targetTask==null)
+        {
+            return R.error("task does not exist");
+        }
+
+        if (!allowEdit(targetTask)) {
+            return R.error("no permission to edit task");
+        }
+
         Task entity = new Task();
         BeanUtils.copyProperties(request, entity);
         int result = taskMapper.updateById(entity);
@@ -85,7 +93,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
     @Override
-    public R queryTask(int userId, TaskSearchCriteria searchCriteria) {
+    public R queryTask(TaskSearchCriteria searchCriteria) {
+        Integer userId = userService.getCurrentUser().getId();
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
 
         //模糊查询task name
@@ -133,5 +142,32 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                 .selectTask(new Page<>(searchCriteria.getPage(), searchCriteria.getPageSize()), queryWrapper);
 
         return R.success("success", result);
+    }
+
+    private boolean allowEdit(Task task) {
+        Integer userId = userService.getCurrentUser().getId();
+        boolean isOwner = task.getOwner().equals(userId);
+        boolean isAssignee = task.getAssignee().equals(userId);
+        if (isOwner || isAssignee) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private String createBlankTemplate(String taskName, String fileFormat) throws IOException {
+        String fileId = RandomUtils.code();
+        File filesDirectory = new File(Constants.FILE_DIR + fileId);
+        if (!filesDirectory.exists()) {
+            filesDirectory.mkdirs();
+        }
+
+        String fileFullPath = filesDirectory + "/" + taskName + "." + fileFormat;
+        try (OutputStream outStream = new FileOutputStream(fileFullPath)) {
+            InputStream is = new ClassPathResource(FILE_TEMPLATE_PATH + FILE_TEMPLATE_NAME + DOT + fileFormat).getInputStream();
+            outStream.write(is.readAllBytes());
+        }
+
+        return fileId;
     }
 }
