@@ -3,7 +3,10 @@ package com.myoffice.app.model.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +16,9 @@ import java.util.List;
 
 @TableName(value = "user")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User implements UserDetails {
     @TableId(type = IdType.AUTO)
     private Integer id;

@@ -22,6 +22,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.time.Instant;
+import java.util.Date;
 
 import static com.myoffice.app.constant.Constants.*;
 
@@ -49,6 +51,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             return R.error("task end date is empty");
         }
 
+        request.setStartDate(Date.from(Instant.now()));
+        request.setStatus(0);
+
         try {
             if ("BLANK".equals(request.getTemplateSource())) {
                 String taskName = request.getName();
@@ -73,8 +78,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Override
     public R editTask(TaskRequest request) {
         Task targetTask = taskMapper.selectById(request.getId());
-        if(targetTask==null)
-        {
+        if (targetTask == null) {
             return R.error("task does not exist");
         }
 

@@ -1,12 +1,17 @@
 package com.myoffice.app.model.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.Instant;
 import java.util.Date;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskRequest {
     private Integer id;
 
@@ -31,7 +36,7 @@ public class TaskRequest {
     private String templateSource;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date startDate = Date.from(Instant.now());
+    private Date startDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
@@ -44,5 +49,5 @@ public class TaskRequest {
     //1.进行中
     //2.已完成
     //3.关闭
-    private Integer status = 0;
+    private Integer status;
 }
