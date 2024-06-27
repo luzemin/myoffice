@@ -6,11 +6,16 @@
 + Vue  
 
 后端：  
-+ Java17 + SpringBoot 
++ Java17
++ SpringBoot 
 + SpringSecurity + JWT
 + Mybatis + MybatisPlus
 + Docker
 + OnlyOffice
++ SpringBootTest + JUnit + Mockito
 
 数据库：
 + MySQL（8.4.0）
+
+服务器：
++ Nginx
