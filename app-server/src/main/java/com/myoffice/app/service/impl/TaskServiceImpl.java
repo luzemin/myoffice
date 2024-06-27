@@ -11,6 +11,7 @@ import com.myoffice.app.model.domain.Task;
 import com.myoffice.app.model.request.TaskRequest;
 import com.myoffice.app.model.request.TaskSearchCriteria;
 import com.myoffice.app.model.response.TaskResponse;
+import com.myoffice.app.security.UserContext;
 import com.myoffice.app.service.TaskService;
 import com.myoffice.app.service.UserService;
 import com.myoffice.app.utils.RandomUtils;
@@ -34,7 +35,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     private TaskMapper taskMapper;
 
     @Autowired
-    private UserService userService;
+    private UserContext userContext;
 
     @Override
     public R createTask(TaskRequest request) {
@@ -98,7 +99,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     public R queryTask(TaskSearchCriteria searchCriteria) {
-        Integer userId = userService.getCurrentUser().getId();
+        Integer userId = userContext.getCurrentUserId();
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
 
         //模糊查询task name
@@ -149,7 +150,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
     private boolean allowEdit(Task task) {
-        Integer userId = userService.getCurrentUser().getId();
+        Integer userId = userContext.getCurrentUserId();
         boolean isOwner = task.getOwner().equals(userId);
         boolean isAssignee = task.getAssignee().equals(userId);
         if (isOwner || isAssignee) {

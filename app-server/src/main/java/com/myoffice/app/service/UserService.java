@@ -12,6 +12,4 @@ public interface UserService extends IService<User> {
     R create(UserRequest userRequest);
 
     R getAllUsers();
-
-    User getCurrentUser();
 }
