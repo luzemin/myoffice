@@ -29,5 +29,4 @@ public class UrlMangerImpl extends DefaultUrlManager {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
                 + request.getContextPath();
     }
-
 }

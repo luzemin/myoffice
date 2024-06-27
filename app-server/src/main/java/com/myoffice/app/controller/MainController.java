@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MainController {
-
     @Autowired
     private ConfigService configService;
+
     @Autowired
     private UrlManager urlManager;
 
     @GetMapping("/editor")
-    public String main(final Model model, String fileId) {
+    public String editor(final Model model, String fileId) {
         Config config = configService.createConfig(fileId, Mode.EDIT, Type.DESKTOP);
 
         model.addAttribute("config", config);

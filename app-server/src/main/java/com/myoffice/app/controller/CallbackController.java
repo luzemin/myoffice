@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 @ResponseBody
 @RestController
 public class CallbackController {
-
     @Autowired
     private CallbackService callbackService;
 
     @PostMapping("/api/onlyoffice/callback")
-    public String callback(@RequestBody final Callback callback,String fileId) {
+    public String callback(@RequestBody final Callback callback, String fileId) {
         try {
-            Callback verifiedCallback =  callbackService.verifyCallback(callback, null);
+            Callback verifiedCallback = callbackService.verifyCallback(callback, null);
 
             callbackService.processCallback(verifiedCallback, fileId);
             return "{\"error\": 0}";
