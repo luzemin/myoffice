@@ -82,7 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return R.error("user name is empty");
         }
 
-        if (StringUtils.isBlank(userRequest.getUsername())) {
+        if (StringUtils.isBlank(userRequest.getPassword())) {
             userRequest.setPassword(DEFAULT_PASSWORD);
         }
 
