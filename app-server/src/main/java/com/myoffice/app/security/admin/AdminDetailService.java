@@ -1,8 +1,8 @@
-package com.myoffice.app.security;
+package com.myoffice.app.security.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.myoffice.app.mapper.UserMapper;
-import com.myoffice.app.model.domain.User;
+import com.myoffice.app.mapper.AdminMapper;
+import com.myoffice.app.model.domain.Admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,13 +10,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SystemUserDetailService implements UserDetailsService {
+public class AdminDetailService implements UserDetailsService {
 
     @Autowired
-    private UserMapper userMapper;
+    private AdminMapper adminMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userMapper.selectOne(new QueryWrapper<User>().eq("username", username));
+        return adminMapper.selectOne(new QueryWrapper<Admin>().eq("name", username));
     }
 }

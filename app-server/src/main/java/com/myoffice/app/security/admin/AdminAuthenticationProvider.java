@@ -1,4 +1,4 @@
-package com.myoffice.app.security;
+package com.myoffice.app.security.admin;
 
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 

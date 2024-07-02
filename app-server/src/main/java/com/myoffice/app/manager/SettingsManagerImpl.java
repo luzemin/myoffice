@@ -22,6 +22,7 @@ public class SettingsManagerImpl extends DefaultSettingsManager {
         properties.put(SettingsConstants.URL, docServerUrl);
         properties.put(SettingsConstants.SECURITY_KEY, securityKey);
         properties.put("customization.forcesave", "true");
+        properties.put("customization.spellcheck", "false");
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.myoffice.app.security;
+package com.myoffice.app.security.user;
 
 import com.myoffice.app.model.domain.User;
 import org.springframework.security.core.Authentication;

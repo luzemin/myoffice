@@ -6,7 +6,7 @@ import com.myoffice.app.mapper.AdminMapper;
 import com.myoffice.app.model.domain.Admin;
 import com.myoffice.app.model.request.AdminRequest;
 import com.myoffice.app.model.response.AdminResponse;
-import com.myoffice.app.security.AdminAuthenticationToken;
+import com.myoffice.app.security.admin.AdminAuthenticationToken;
 import com.myoffice.app.service.AdminService;
 import com.myoffice.app.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;

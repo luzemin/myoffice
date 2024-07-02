@@ -1,5 +1,9 @@
 package com.myoffice.app.security;
 
+import com.myoffice.app.security.admin.AdminAuthenticationProvider;
+import com.myoffice.app.security.admin.AdminDetailService;
+import com.myoffice.app.security.user.SystemUserAuthenticationProvider;
+import com.myoffice.app.security.user.SystemUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +53,8 @@ public class SecurityConfigurations {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/health").permitAll()
+                        .requestMatchers("/password/**").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()

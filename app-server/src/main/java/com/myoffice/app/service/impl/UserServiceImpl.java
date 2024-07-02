@@ -2,7 +2,7 @@ package com.myoffice.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.myoffice.app.security.SystemUserAuthenticationToken;
+import com.myoffice.app.security.user.SystemUserAuthenticationToken;
 import com.myoffice.app.common.R;
 import com.myoffice.app.mapper.UserMapper;
 import com.myoffice.app.model.domain.User;
@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.myoffice.app.constant.Constants.DEFAULT_PASSWORD;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -76,6 +78,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public R create(UserRequest userRequest) {
+        if (StringUtils.isBlank(userRequest.getUsername())) {
+            return R.error("user name is empty");
+        }
+
+        if (StringUtils.isBlank(userRequest.getUsername())) {
+            userRequest.setPassword(DEFAULT_PASSWORD);
+        }
+
         User user = new User();
         user.setUsername(userRequest.getUsername());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
