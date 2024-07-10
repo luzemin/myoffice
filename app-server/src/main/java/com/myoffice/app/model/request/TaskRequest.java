@@ -43,7 +43,7 @@ public class TaskRequest {
 
     private Integer owner;
 
-    private Integer assignee;
+    private String assignee;
 
     //0.未开始
     //1.进行中

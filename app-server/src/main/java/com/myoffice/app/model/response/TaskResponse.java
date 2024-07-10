@@ -11,5 +11,5 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TaskResponse extends Task {
     private String ownerName;
-    private String assigneeName;
+    private String assigneeNames;
 }

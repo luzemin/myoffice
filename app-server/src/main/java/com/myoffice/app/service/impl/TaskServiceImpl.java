@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static com.myoffice.app.constant.Constants.*;
 
@@ -44,7 +46,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         if (request.getOwner() == null) {
             return R.error("task owner is empty");
         }
-        if (request.getAssignee() == null) {
+        if (StringUtils.isBlank(request.getAssignee())) {
             return R.error("task assignee is empty");
         }
         if (request.getEndDate() == null) {
@@ -118,22 +120,28 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             queryWrapper.apply(applySql);
         }
 
-        //创建人
+        //我创建的
         if (Boolean.TRUE.equals(searchCriteria.getIsOwner())) {
             queryWrapper.eq("task.owner", userId);
         }
 
-        //执行人
+        //指派给我的
         if (Boolean.TRUE.equals(searchCriteria.getIsAssignee())) {
-            queryWrapper.eq("task.assignee", userId);
+            String applySql = "FIND_IN_SET(" + userId + ", task.assignee)";
+            queryWrapper.apply(applySql);
         }
 
+        //默认查询：我创建的或者指派给我的
         if (searchCriteria.getIsOwner() == null && searchCriteria.getIsAssignee() == null) {
-            queryWrapper.and(c -> c.eq("task.assignee", userId).or().eq("task.owner", userId));
+            queryWrapper.and(c -> c.apply("FIND_IN_SET(" + userId + ", task.assignee)")
+                    .or().eq("task.owner", userId));
         }
 
         //排序
         queryWrapper.orderBy(true, false, "task.id");
+
+        //分组
+        queryWrapper.groupBy(List.of("task.id", "u1.username"));
 
         //默认单表分页查询
         //IPage<Task> result = taskMapper.selectPage(page, queryWrapper);
@@ -150,13 +158,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     private boolean allowEdit(Task task) {
         Integer userId = userContext.getCurrentUserId();
-        boolean isOwner = task.getOwner().equals(userId);
-        boolean isAssignee = task.getAssignee().equals(userId);
-        if (isOwner || isAssignee) {
-            return true;
-        }
 
-        return false;
+        boolean isOwner = task.getOwner().equals(userId);
+        boolean isAssignee = Arrays.stream(task.getAssignee().split(","))
+                .map(Integer::parseInt)
+                .anyMatch(id -> id.equals(userId));
+
+        return isOwner || isAssignee;
     }
 
     private String createBlankTemplate(String taskName, String fileFormat) throws IOException {

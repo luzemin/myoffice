@@ -14,13 +14,13 @@
     <result column="start_date" jdbcType="DATE" property="startDate" />
     <result column="end_date" jdbcType="DATE" property="endDate" />
     <result column="owner" jdbcType="INTEGER" property="owner" />
-    <result column="assignee" jdbcType="INTEGER" property="assignee" />
+    <result column="assignee" jdbcType="VARCHAR" property="assignee" />
     <result column="status" jdbcType="INTEGER" property="status" />
   </resultMap>
 
   <resultMap id="taskResponseMap" extends="BaseResultMap" type="com.myoffice.app.model.response.TaskResponse">
     <result column="owner_name" jdbcType="VARCHAR" property="ownerName" />
-    <result column="assignee_name" jdbcType="VARCHAR" property="assigneeName" />
+    <result column="assignee_names" jdbcType="VARCHAR" property="assigneeNames" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -42,7 +42,7 @@
     SELECT
       <include refid="Base_Column_List"></include>
       ,u1.username as owner_name
-      ,u2.username as assignee_name
+      ,GROUP_CONCAT(u2.username) AS assignee_names
     FROM
       task
     JOIN
@@ -52,7 +52,7 @@
     JOIN
       user u2
     ON
-      task.assignee = u2.id
+      FIND_IN_SET(u2.id, task.assignee)
     <where>
       ${ew.sqlSegment}
     </where>

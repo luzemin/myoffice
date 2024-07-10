@@ -24,7 +24,7 @@ CREATE TABLE `task` (
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
   `owner` int NOT NULL,
-  `assignee` varchar(100) NOT NULL,
+  `assignee` varchar(1000) NOT NULL,
   `status` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

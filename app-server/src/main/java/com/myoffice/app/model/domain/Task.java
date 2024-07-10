@@ -28,7 +28,7 @@ public class Task {
     private Date startDate;
     private Date endDate;
     private Integer owner;
-    private Integer assignee;
+    private String assignee;
     private Integer status;
 
     @Override
