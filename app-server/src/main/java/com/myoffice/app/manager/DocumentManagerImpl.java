@@ -21,7 +21,10 @@ public class DocumentManagerImpl extends DefaultDocumentManager {
     @Override
     public String getDocumentName(final String fileId) {
         File dir = new File(Constants.FILE_DIR + fileId);
-        File file = dir.listFiles()[0];
-        return file.getName();
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            throw new IllegalArgumentException("No file found for fileId: " + fileId);
+        }
+        return files[0].getName();
     }
 }

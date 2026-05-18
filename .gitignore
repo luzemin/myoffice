@@ -1,0 +1,33 @@
+# ===== IDE / Editor =====
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# ===== OS junk =====
+.DS_Store
+Thumbs.db
+
+# ===== Env files (keep .env.example) =====
+.env
+.env.*
+!.env.example
+
+# ===== Java / Maven (app-server) =====
+target/
+logs/
+*.log
+
+# ===== Backend runtime files =====
+app-server/files/
+
+# ===== Node / SvelteKit (app-client) =====
+node_modules/
+.svelte-kit/
+build/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

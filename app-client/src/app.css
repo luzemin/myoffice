@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background:
+      radial-gradient(900px 500px at 8% -10%, rgba(34, 211, 238, 0.16), transparent 60%),
+      radial-gradient(800px 500px at 110% 20%, rgba(139, 92, 246, 0.16), transparent 55%),
+      radial-gradient(700px 500px at 50% 120%, rgba(20, 184, 166, 0.12), transparent 60%),
+      #05070d;
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(34, 211, 238, 0.35);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+}
+
+@layer components {
+  .glass {
+    @apply rounded-2xl border border-white/5 bg-ink-850/70 backdrop-blur-xl shadow-card;
+  }
+
+  .glass-strong {
+    @apply rounded-2xl border border-white/10 bg-ink-850/85 backdrop-blur-xl shadow-card;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-accent-cyan/40 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn text-ink-950;
+    background-image: linear-gradient(135deg, #22d3ee 0%, #14b8a6 50%, #3b82f6 100%);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.08);
+  }
+
+  .btn-secondary {
+    @apply btn border border-white/10 bg-ink-800 text-ink-100 hover:bg-ink-700;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink-200 hover:bg-white/5;
+  }
+
+  .btn-danger {
+    @apply btn bg-rose-600/90 text-white hover:bg-rose-600;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-white/10 bg-ink-900/80 px-3 py-2 text-sm text-ink-100 placeholder-ink-400 outline-none transition focus:border-accent-cyan/60 focus:ring-2 focus:ring-accent-cyan/20;
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-ink-300;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-white/10 bg-ink-800/70 px-2.5 py-0.5 text-xs text-ink-200;
+  }
+
+  .divider {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ink-300 transition hover:bg-white/5 hover:text-ink-100;
+  }
+  .nav-link[aria-current='page'] {
+    @apply bg-white/5 text-ink-100 shadow-glow;
+  }
+}

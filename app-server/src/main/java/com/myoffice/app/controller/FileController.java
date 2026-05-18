@@ -41,7 +41,11 @@ public class FileController {
     @GetMapping("/api/file/download")
     public ResponseEntity<Resource> download(String fileId) throws FileNotFoundException, UnsupportedEncodingException {
         File dir = new File(Constants.FILE_DIR + fileId);
-        File file = dir.listFiles()[0];
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            throw new FileNotFoundException("No file found for fileId: " + fileId);
+        }
+        File file = files[0];
         String fileName = URLEncoder.encode(file.getName(), "UTF-8");
 
         return ResponseEntity.ok()

@@ -1,0 +1,105 @@
+name: myoffice
+
+services:
+  # ----------------------------------------------------------
+  # MySQL 8 - persistent docs metadata.
+  # ----------------------------------------------------------
+  mysql:
+    image: mysql:8.4.0
+    container_name: myoffice-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-myoffice123}
+      MYSQL_DATABASE: myoffice
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./app-server/src/main/resources/data/schema-docker.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    ports:
+      - "${MYSQL_HOST_PORT:-3306}:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks:
+      - myoffice-net
+
+  # ----------------------------------------------------------
+  # OnlyOffice DocumentServer - rendering & co-editing engine.
+  # ----------------------------------------------------------
+  onlyoffice-server:
+    image: onlyoffice/documentserver:latest
+    container_name: myoffice-onlyoffice
+    restart: unless-stopped
+    environment:
+      JWT_ENABLED: "true"
+      JWT_SECRET: ${ONLYOFFICE_JWT_SECRET:-my_jwt_secret}
+      JWT_HEADER: Authorization
+    ports:
+      - "${ONLYOFFICE_HOST_PORT:-8088}:80"
+    volumes:
+      - onlyoffice_data:/var/www/onlyoffice/Data
+      - onlyoffice_log:/var/log/onlyoffice
+      - onlyoffice_cache:/var/lib/onlyoffice
+      - onlyoffice_db:/var/lib/postgresql
+    networks:
+      - myoffice-net
+
+  # ----------------------------------------------------------
+  # MyOffice backend - Spring Boot.
+  # ----------------------------------------------------------
+  app-server:
+    build:
+      context: ./app-server
+    image: myoffice/app-server:latest
+    container_name: myoffice-app-server
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      onlyoffice-server:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-myoffice123}
+      ONLYOFFICE_PUBLIC_URL: http://localhost:${ONLYOFFICE_HOST_PORT:-8088}/
+      ONLYOFFICE_JWT_SECRET: ${ONLYOFFICE_JWT_SECRET:-my_jwt_secret}
+      MYOFFICE_INTERNAL_BASE_URL: http://app-server:80
+    volumes:
+      - app_server_files:/app/files
+    ports:
+      - "${APP_SERVER_HOST_PORT:-8080}:80"
+    networks:
+      - myoffice-net
+
+  # ----------------------------------------------------------
+  # MyOffice frontend - SvelteKit static + nginx reverse-proxy.
+  # ----------------------------------------------------------
+  app-client:
+    build:
+      context: ./app-client
+    image: myoffice/app-client:latest
+    container_name: myoffice-app-client
+    restart: unless-stopped
+    depends_on:
+      - app-server
+    ports:
+      - "${APP_CLIENT_HOST_PORT:-3000}:80"
+    networks:
+      - myoffice-net
+
+volumes:
+  mysql_data:
+  onlyoffice_data:
+  onlyoffice_log:
+  onlyoffice_cache:
+  onlyoffice_db:
+  app_server_files:
+
+networks:
+  myoffice-net:
+    driver: bridge

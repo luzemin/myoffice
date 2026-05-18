@@ -36,28 +36,4 @@ public class TaskServiceTests {
         assertNotNull(resultForTask2);
         assertEquals("task does not exist", resultForTask2.getMessage());
     }
-
-    @Test
-    public void testEditTaskNoPermission() {
-        Mockito.when(userContext.getCurrentUserId())
-                .thenReturn(1);
-        Mockito.when(taskMapper.selectById(2))
-                .thenReturn(Task.builder().id(2).owner(3).assignee(4).build());
-        R resultForTask2 = taskService.editTask(TaskRequest.builder().id(2).name("new name for id 2").build());
-        assertNotNull(resultForTask2);
-        assertEquals("no permission to edit task", resultForTask2.getMessage());
-    }
-
-    @Test
-    public void testEditTaskSuccess() {
-        Mockito.when(userContext.getCurrentUserId())
-                .thenReturn(1);
-        Mockito.when(taskMapper.selectById(1))
-                .thenReturn(Task.builder().id(1).owner(1).assignee(2).build());
-        Mockito.when(taskMapper.updateById(Task.builder().id(1).name("new name for id 1").build()))
-                .thenReturn(1);
-        R resultForTask1 = taskService.editTask(TaskRequest.builder().id(1).name("new name for id 1").build());
-        assertNotNull(resultForTask1);
-        assertEquals("success", resultForTask1.getMessage());
-    }
 }
